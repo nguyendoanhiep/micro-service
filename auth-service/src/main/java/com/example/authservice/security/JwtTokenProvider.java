@@ -1,4 +1,4 @@
-package com.example.authservice.sercurity;
+package com.example.authservice.security;
 
 import com.example.authservice.entity.CustomUserDetails;
 import io.jsonwebtoken.*;
@@ -21,13 +21,12 @@ public class JwtTokenProvider {
     }
 
     public String generateToken(CustomUserDetails userDetails) {
-        Date now = new Date();
         long JWT_EXPIRATION = 604800000L;
-        Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
+        Date expiryDate = new Date(new Date().getTime() + JWT_EXPIRATION);
         return Jwts.builder()
                 .claim("id", userDetails.getId())
                 .claim("username", userDetails.getUsername())
-                .setIssuedAt(now)
+                .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS256, getSigningKey())
                 .compact();

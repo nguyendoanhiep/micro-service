@@ -11,14 +11,9 @@ spring:
     gateway:
       routes:
         - id: auth_service
-          uri: http://localhost:8081
+          uri: http://localhost:8001
           predicates:
-            - Path=${app.api-prefix}/auth/**
+#            - Path=${app.api-prefix}/auth/**
+            - Path=${app.api-prefix}/user/**
           filters:
             - StripPrefix=2
-#        - id: profile_service
-#          uri: http://localhost:8081
-#          predicates:
-#            - Path=${app.api-prefix}/profile/users/**
-#          filters:
-#            - StripPrefix=2
