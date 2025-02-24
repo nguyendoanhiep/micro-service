@@ -13,8 +13,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 public class WebSecurityConfig {
+
     @Autowired
     UserDetailsServiceImpl userDetailsServiceImpl;
+
+    private static final String[] PUBLIC_ENDPOINTS = {
+            "/auth/register",
+            "/auth/login"
+    };
+
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
@@ -30,8 +37,8 @@ public class WebSecurityConfig {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/user/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers("/**").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

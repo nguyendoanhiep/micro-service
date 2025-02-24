@@ -9,8 +9,6 @@ import org.springframework.data.domain.Pageable;
 public interface UserService {
     Page<User> getAll(Pageable pageable , String search, Integer status);
 
-    Boolean register(FormRegister formRegister);
-    String login(FormLogin formLogin);
 //    Response<?> editUser(UserRequest request);
 //    Response<?> changePassword(FormChangePassword formChangePassword);
 }

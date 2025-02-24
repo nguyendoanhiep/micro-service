@@ -1,8 +1,9 @@
 package com.example.authservice.controller;
 
-import com.example.authservice.dto.ApiResponse;
+import com.example.authservice.exception.ApiResponse;
 import com.example.authservice.dto.request.FormLogin;
 import com.example.authservice.dto.request.FormRegister;
+import com.example.authservice.service.AuthService;
 import com.example.authservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,23 +14,16 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     @Autowired
-    UserService userService;
+    AuthService authService;
 
     @PostMapping("/register")
     public ApiResponse<?> register(@RequestBody FormRegister formRegister) {
-        return ApiResponse.builder()
-                .code(200)
-                .message("ok")
-                .result(userService.register(formRegister))
-                .build();
+        return ApiResponse.SUCCESS(authService.register(formRegister));
     }
 
     @PostMapping("/login")
     public ApiResponse<?> login(@RequestBody FormLogin formLogin) {
-        return ApiResponse.builder()
-                .code(200)
-                .message("ok")
-                .result(userService.login(formLogin))
-                .build();
+        return ApiResponse.SUCCESS(authService.login(formLogin));
+
     }
 }

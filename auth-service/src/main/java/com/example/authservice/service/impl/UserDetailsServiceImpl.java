@@ -13,7 +13,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
                 .map(user -> new CustomUserDetails(
                         user.getId(),

@@ -1,9 +1,12 @@
 package com.example.authservice.security;
+import com.example.authservice.entity.CustomUserDetails;
+import com.example.authservice.service.AuthService;
 import com.example.authservice.service.impl.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     JwtTokenProvider tokenProvider;
     @Autowired
     UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    AuthService authService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
