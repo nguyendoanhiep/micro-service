@@ -1,9 +1,11 @@
-package com.example.authservice.exception;
+package com.example.authservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.io.Serializable;
 
 @Data
 @Builder
@@ -11,7 +13,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ApiResponse<T> {
+public class ApiResponse<T> implements Serializable {
     @Builder.Default
     private int code = 1000;
     private String message;
@@ -25,22 +27,16 @@ public class ApiResponse<T> {
         response.setData(data);
         return response;
     }
-    public static <T> ApiResponse<?> SUCCESS() {
-        ApiResponse<T> response = new ApiResponse<>();
-        response.setCode(ErrorCode.SUCCESS.getCode());
-        response.setMessage(ErrorCode.SUCCESS.getMessage());
-        return response;
-    }
     public static <T> ApiResponse<?> FAIL(int code , String message) {
         ApiResponse<T> response = new ApiResponse<>();
         response.setCode(code);
         response.setMessage(message);
         return response;
     }
-    public static <T> ApiResponse<?> FAIL(ErrorCode details) {
+    public static <T> ApiResponse<?> FAIL(ErrorCode errorCode) {
         ApiResponse<T> response = new ApiResponse<>();
-        response.setCode(details.getCode());
-        response.setMessage(details.getMessage());
+        response.setCode(errorCode.getCode());
+        response.setMessage(errorCode.getMessage());
         return response;
     }
 }

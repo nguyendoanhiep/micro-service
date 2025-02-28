@@ -2,31 +2,38 @@ package com.example.authservice.service.impl;
 
 import com.example.authservice.dto.request.FormLogin;
 import com.example.authservice.dto.request.FormRegister;
+import com.example.authservice.dto.request.IntrospectRequest;
 import com.example.authservice.entity.CustomUserDetails;
 import com.example.authservice.entity.Role;
 import com.example.authservice.entity.User;
+import com.example.authservice.entity.UserLoginInfo;
 import com.example.authservice.exception.BusinessException;
 import com.example.authservice.exception.DataAlreadyExistsException;
-import com.example.authservice.exception.ErrorCode;
+import com.example.authservice.dto.ErrorCode;
+import com.example.authservice.exception.ForbiddenException;
+import com.example.authservice.repository.ResourceRepository;
 import com.example.authservice.repository.RoleRepository;
 import com.example.authservice.repository.UserRepository;
 import com.example.authservice.security.JwtTokenProvider;
 import com.example.authservice.service.AuthService;
+import com.google.gson.Gson;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+
 @Service
 @Slf4j
 public class AuthServiceImpl implements AuthService {
@@ -45,6 +52,17 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
+    @Autowired
+    ResourceRepository resourceRepository;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+    private static final String[] PUBLIC_ENDPOINTS = {
+            "/auth/register",
+            "/auth/login",
+            "/auth/introspect",
+    };
+    private PathMatcher pathMatcher = new AntPathMatcher();
     @Override
     @Transactional
     public Boolean register(FormRegister formRegister) {
@@ -84,7 +102,17 @@ public class AuthServiceImpl implements AuthService {
                     userDetails.getAuthorities()
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            return jwtTokenProvider.generateToken(userDetails);
+            String jwt = jwtTokenProvider.generateToken(userDetails);
+            UserLoginInfo userLoginInfo = UserLoginInfo
+                    .builder()
+                    .id(userDetails.getId())
+                    .username(userDetails.getUsername())
+                    .roles(userDetails.getRoles())
+                    .resources(resourceRepository.getResourcesByRoleIds(userDetails.getRoles().stream().map(Role::getId).collect(Collectors.toSet())))
+                    .jwtToken(jwt)
+                    .build();
+            saveUserSession(userLoginInfo);
+            return jwt;
         }catch (Exception e) {
             log.info(e.getMessage());
             throw e;
@@ -92,9 +120,30 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void authenticator(String jwt) {
-        if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {
-
+    public boolean introspect(IntrospectRequest introspectRequest) {
+        if(Arrays.stream(PUBLIC_ENDPOINTS).anyMatch(
+                publicEndpoint -> pathMatcher.match(publicEndpoint,introspectRequest.getPath()))){
+            return true;
         }
+        if (!jwtTokenProvider.validateToken(introspectRequest.getToken())) {
+            throw new InvalidBearerTokenException("Invalid Token");
+        }
+        UserLoginInfo userLoginInfo = getUserSession(jwtTokenProvider.getIdFromJWT(introspectRequest.getToken()));
+        if(userLoginInfo.getResources().stream().noneMatch(
+                item -> item.getPath().contains(introspectRequest.getPath()))){
+            throw new ForbiddenException(ErrorCode.UNAUTHORIZATION);
+        }
+        return true;
+    }
+
+    public void saveUserSession(UserLoginInfo userLoginInfo){
+        try {
+            stringRedisTemplate.opsForValue().set("USER_SESSION_" + userLoginInfo.getId(),new Gson().toJson(userLoginInfo));
+        }catch (Exception e){
+            log.info(e.getMessage());
+        }
+    }
+    public UserLoginInfo getUserSession(Long id) {
+        return new Gson().fromJson(stringRedisTemplate.opsForValue().get("USER_SESSION_" + id),UserLoginInfo.class);
     }
 }

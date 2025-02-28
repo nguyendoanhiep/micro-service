@@ -18,3 +18,9 @@ spring:
         hb2dll:
           auto: update
     generate-ddl: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      timeout: 60000

@@ -1,6 +1,6 @@
 package com.example.authservice.controller;
 
-import com.example.authservice.exception.ApiResponse;
+import com.example.authservice.dto.ApiResponse;
 import com.example.authservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +16,7 @@ public class UserController {
     @GetMapping("/getAll")
     public ApiResponse<?> getAll(@RequestParam int page,
                                  @RequestParam int size,
-                                 @RequestParam String search,
+                                 @RequestParam(required = false) String search,
                                  @RequestParam Integer status
     ) {
         return ApiResponse.SUCCESS(userService.getAll(PageRequest.of(page - 1, size), search, status));

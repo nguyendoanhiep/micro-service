@@ -4,16 +4,18 @@ import com.example.authservice.dto.ErrorCode;
 import lombok.Data;
 
 @Data
-public class BusinessException extends RuntimeException{
+public class ForbiddenException extends RuntimeException{
 
-    private ErrorCode errorCode;
+    private ErrorCode errorCode = ErrorCode.UNAUTHORIZATION;
 
-    public BusinessException(ErrorCode errorCode) {
+    public ForbiddenException(ErrorCode errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
 
-    public BusinessException(String message) {
+    public ForbiddenException(String message) {
         super(message);
     }
+
+
 }

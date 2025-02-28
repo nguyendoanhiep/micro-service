@@ -1,10 +1,11 @@
 package com.example.authservice.controller;
 
-import com.example.authservice.exception.ApiResponse;
+import com.example.authservice.dto.request.IntrospectRequest;
+import com.example.authservice.dto.ApiResponse;
 import com.example.authservice.dto.request.FormLogin;
 import com.example.authservice.dto.request.FormRegister;
 import com.example.authservice.service.AuthService;
-import com.example.authservice.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,5 +26,9 @@ public class AuthController {
     public ApiResponse<?> login(@RequestBody FormLogin formLogin) {
         return ApiResponse.SUCCESS(authService.login(formLogin));
 
+    }
+    @PostMapping("/introspect")
+    public ApiResponse<?> introspect(@RequestBody IntrospectRequest request) {
+        return ApiResponse.SUCCESS(authService.introspect(request));
     }
 }

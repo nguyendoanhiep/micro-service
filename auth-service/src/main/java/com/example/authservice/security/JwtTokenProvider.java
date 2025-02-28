@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 
@@ -14,7 +15,7 @@ import java.util.Date;
 @Slf4j
 public class JwtTokenProvider {
 
-    private Key getSigningKey() {
+    public SecretKey getSigningKey() {
         String secretCode = "Hieppnguyenn199925312345Hieppnguyenn199925312345Hieppnguyenn199925312345";
         byte[] keyBytes = Decoders.BASE64.decode(secretCode);
         return Keys.hmacShaKeyFor(keyBytes);

@@ -5,16 +5,16 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "resource")
-public class Resource {
+@Table(name = "role_resource")
+public class RoleResource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "path")
-    private String path;
+    @Column(name = "role_id")
+    private Long roleId;
 
-    @Column(name = "method")
-    private String method;
+    @Column(name = "resource_id")
+    private Long resourceId;
 }
