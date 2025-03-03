@@ -2,7 +2,6 @@ package com.example.identityservice.config;
 
 import com.example.identityservice.security.JwtAuthenticationEntryPoint;
 import com.example.identityservice.security.JwtTokenProvider;
-import com.example.identityservice.service.impl.UserDetailsServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -26,14 +25,11 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 public class WebSecurityConfig {
 
     @Autowired
-    UserDetailsServiceImpl userDetailsServiceImpl;
-
-    @Autowired
     JwtTokenProvider jwtTokenProvider;
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/auth/register",
-            "/auth/login",
-            "/auth/introspect",
+            "/identity/auth/register",
+            "/identity/auth/login",
+            "/identity/auth/introspect",
     };
 
     @Bean

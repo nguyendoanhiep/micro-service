@@ -20,23 +20,25 @@ public class ApiResponse<T> implements Serializable {
     private T data;
 
 
-    public static <T> ApiResponse<?> SUCCESS( T data) {
-        ApiResponse<T> response = new ApiResponse<>();
-        response.setCode(ErrorCode.SUCCESS.getCode());
-        response.setMessage(ErrorCode.SUCCESS.getMessage());
-        response.setData(data);
-        return response;
+    public static <T> ApiResponse<?> SUCCESS(T data) {
+        return ApiResponse.builder()
+                .code(ErrorCode.SUCCESS.getCode())
+                .message(ErrorCode.SUCCESS.getMessage())
+                .data(data)
+                .build();
     }
-    public static <T> ApiResponse<?> FAIL(int code , String message) {
-        ApiResponse<T> response = new ApiResponse<>();
-        response.setCode(code);
-        response.setMessage(message);
-        return response;
+    public static ApiResponse<?> FAIL(int code , String message) {
+        return ApiResponse.builder()
+                .code(code)
+                .message(message)
+                .data(false)
+                .build();
     }
-    public static <T> ApiResponse<?> FAIL(ErrorCode errorCode) {
-        ApiResponse<T> response = new ApiResponse<>();
-        response.setCode(errorCode.getCode());
-        response.setMessage(errorCode.getMessage());
-        return response;
+    public static ApiResponse<?> FAIL(ErrorCode errorCode) {
+        return ApiResponse.builder()
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .data(false)
+                .build();
     }
 }

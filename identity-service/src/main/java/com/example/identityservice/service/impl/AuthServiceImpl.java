@@ -3,10 +3,9 @@ package com.example.identityservice.service.impl;
 import com.example.identityservice.dto.request.FormLogin;
 import com.example.identityservice.dto.request.FormRegister;
 import com.example.identityservice.dto.request.IntrospectRequest;
-import com.example.identityservice.entity.CustomUserDetails;
 import com.example.identityservice.entity.Role;
 import com.example.identityservice.entity.User;
-import com.example.identityservice.entity.UserLoginInfo;
+import com.example.identityservice.dto.UserLoginInfo;
 import com.example.identityservice.exception.BusinessException;
 import com.example.identityservice.exception.DataAlreadyExistsException;
 import com.example.identityservice.dto.ErrorCode;
@@ -21,9 +20,6 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
@@ -50,17 +46,14 @@ public class AuthServiceImpl implements AuthService {
     RoleRepository roleRepository;
 
     @Autowired
-    UserDetailsServiceImpl userDetailsService;
-
-    @Autowired
     ResourceRepository resourceRepository;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/auth/register",
-            "/auth/login",
-            "/auth/introspect",
+            "/identity/auth/register",
+            "/identity/auth/login",
+            "/identity/auth/introspect",
     };
     private PathMatcher pathMatcher = new AntPathMatcher();
     @Override
@@ -69,7 +62,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             Optional<User> checkUserExists = userRepository.findByUsername(formRegister.getUsername());
             if (checkUserExists.isPresent()) {
-                throw new DataAlreadyExistsException(ErrorCode.DATA_ALREADY_EXISTS);
+                throw new DataAlreadyExistsException();
             }
             Set<Role> roles = new HashSet<>();
             Optional<Role> role = roleRepository.findByName("ROLE_USER");
@@ -94,21 +87,19 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public String login(FormLogin formLogin) {
         try {
-            CustomUserDetails userDetails = userDetailsService.loadUserByUsername(formLogin.getUsername());
-            if(!passwordEncoder.matches(formLogin.getPassword(),userDetails.getPassword())) throw new BusinessException(ErrorCode.INVALID_PASSWORD);
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    userDetails.getUsername(),
-                    userDetails.getPassword(),
-                    userDetails.getAuthorities()
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = jwtTokenProvider.generateToken(userDetails);
+            User user = userRepository.getUserByUsername(formLogin.getUsername());
+            if(!passwordEncoder.matches(formLogin.getPassword(),user.getPassword())) throw new BusinessException(ErrorCode.INVALID_PASSWORD);
+            String jwt = jwtTokenProvider.generateToken(user);
             UserLoginInfo userLoginInfo = UserLoginInfo
                     .builder()
-                    .id(userDetails.getId())
-                    .username(userDetails.getUsername())
-                    .roles(userDetails.getRoles())
-                    .resources(resourceRepository.getResourcesByRoleIds(userDetails.getRoles().stream().map(Role::getId).collect(Collectors.toSet())))
+                    .id(user.getId())
+                    .username(user.getUsername())
+                    .roles(user.getRoles())
+                    .resources(resourceRepository.getResourcesByRoleIds(user
+                            .getRoles()
+                            .stream()
+                            .map(Role::getId)
+                            .collect(Collectors.toSet())))
                     .jwtToken(jwt)
                     .build();
             saveUserSession(userLoginInfo);
@@ -131,7 +122,7 @@ public class AuthServiceImpl implements AuthService {
         UserLoginInfo userLoginInfo = getUserSession(jwtTokenProvider.getIdFromJWT(introspectRequest.getToken()));
         if(userLoginInfo.getResources().stream().noneMatch(
                 item -> item.getPath().contains(introspectRequest.getPath()))){
-            throw new ForbiddenException(ErrorCode.UNAUTHORIZATION);
+            throw new ForbiddenException();
         }
         return true;
     }

@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class DataAlreadyExistsException extends RuntimeException{
 
-    private ErrorCode errorCode;
+    private ErrorCode errorCode = ErrorCode.DATA_ALREADY_EXISTS;
 
     public DataAlreadyExistsException(ErrorCode errorCode) {
         super(errorCode.getMessage());
@@ -14,5 +14,7 @@ public class DataAlreadyExistsException extends RuntimeException{
     }
     public DataAlreadyExistsException(String message) {
         super(message);
+    }
+    public DataAlreadyExistsException() {
     }
 }

@@ -7,6 +7,5 @@ import com.example.identityservice.dto.request.IntrospectRequest;
 public interface AuthService {
     Boolean register(FormRegister formRegister);
     String login(FormLogin formLogin);
-
     boolean introspect(IntrospectRequest jwt);
 }

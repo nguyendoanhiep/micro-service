@@ -18,4 +18,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "and u.status = :status")
     Page<UserResponse> getAll(Pageable pageable, String search , Integer status);
 
+    User getUserByUsername(String username);
+
 }

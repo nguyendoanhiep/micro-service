@@ -1,6 +1,6 @@
 package com.example.identityservice.security;
 
-import com.example.identityservice.entity.CustomUserDetails;
+import com.example.identityservice.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -20,14 +20,12 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(CustomUserDetails userDetails) {
-        long JWT_EXPIRATION = 604800000L;
-        Date expiryDate = new Date(new Date().getTime() + JWT_EXPIRATION);
+    public String generateToken(User user) {
         return Jwts.builder()
-                .claim("id", userDetails.getId())
-                .claim("username", userDetails.getUsername())
+                .claim("id", user.getId())
+                .claim("username", user.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(expiryDate)
+                .setExpiration(new Date(new Date().getTime() + 604800000L))
                 .signWith(SignatureAlgorithm.HS256, getSigningKey())
                 .compact();
     }
