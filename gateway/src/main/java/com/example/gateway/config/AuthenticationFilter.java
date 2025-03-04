@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -48,11 +49,18 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
                 return chain.filter(exchange);
             else
                 return unauthenticated(exchange.getResponse(), introspectResponse);
-        }).onErrorResume(throwable ->
-                unauthenticated(exchange.getResponse(), ApiResponse.builder()
-                        .code(exchange.getResponse().getStatusCode().value())
-                        .message(throwable.getMessage())
-                        .build()));
+                })
+                .onErrorResume(throwable -> {
+                    int statusCode = 500;
+                    if (throwable instanceof WebClientResponseException webClientEx) {
+                        statusCode = webClientEx.getStatusCode().value();
+                    }
+                    return unauthenticated(exchange.getResponse(), ApiResponse.builder()
+                            .code(statusCode)
+                            .message(throwable.getMessage())
+                            .data(false)
+                            .build());
+                });
     }
 
     @Override

@@ -29,14 +29,6 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS256, getSigningKey())
                 .compact();
     }
-    public String getUsernameFromJWT(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(getSigningKey())
-                .parseClaimsJws(token)
-                .getBody();
-
-        return claims.get("username", String.class);
-    }
     public Long getIdFromJWT(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(getSigningKey())

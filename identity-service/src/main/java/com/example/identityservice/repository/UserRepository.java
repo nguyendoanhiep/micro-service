@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select new com.example.identityservice.dto.response.UserResponse(u.id,u.username,u.numberPhone,u.status,u.createDate,u.modifiedDate)from User u " +
             "where (:search is null or u.username like %:search% ) " +
             "and (:search is null or u.numberPhone like :search) " +
-            "and u.status = :status")
+            "and (:status is null or u.status = :status)")
     Page<UserResponse> getAll(Pageable pageable, String search , Integer status);
 
     User getUserByUsername(String username);

@@ -14,8 +14,8 @@ public class RoleController {
     @Autowired
     RoleService roleService;
     @GetMapping("/getAll")
-    public ApiResponse<?> getAll(@RequestParam int page,
-                                 @RequestParam int size,
+    public ApiResponse<?> getAll(@RequestParam(defaultValue = "1") int page,
+                                 @RequestParam(defaultValue = "10") int size,
                                  @RequestParam(required = false) String name,
                                  @RequestParam Integer status
     ) {

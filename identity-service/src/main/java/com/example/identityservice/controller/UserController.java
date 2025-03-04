@@ -15,10 +15,10 @@ public class UserController {
     UserService userService;
 
     @GetMapping("/getAll")
-    public ApiResponse<?> getAll(@RequestParam int page,
-                                 @RequestParam int size,
+    public ApiResponse<?> getAll(@RequestParam(defaultValue = "1") int page,
+                                 @RequestParam(defaultValue = "10") int size,
                                  @RequestParam(required = false) String search,
-                                 @RequestParam Integer status
+                                 @RequestParam(required = false) Integer status
     ) {
         return ApiResponse.SUCCESS(userService.getAll(PageRequest.of(page - 1, size), search, status));
     }

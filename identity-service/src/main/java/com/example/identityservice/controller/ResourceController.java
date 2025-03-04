@@ -17,8 +17,8 @@ public class ResourceController {
     ResourceService resourceService;
 
     @GetMapping("/getAll")
-    public ApiResponse<?> getAll(@RequestParam int page,
-                                 @RequestParam int size,
+    public ApiResponse<?> getAll(@RequestParam(defaultValue = "1") int page,
+                                 @RequestParam(defaultValue = "10") int size,
                                  @RequestParam(required = false) String path,
                                  @RequestParam Integer status
     ) {

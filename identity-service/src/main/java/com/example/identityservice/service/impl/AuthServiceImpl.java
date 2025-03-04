@@ -54,8 +54,9 @@ public class AuthServiceImpl implements AuthService {
             "/identity/auth/register",
             "/identity/auth/login",
             "/identity/auth/introspect",
+            "/product/getAll",
     };
-    private PathMatcher pathMatcher = new AntPathMatcher();
+    private final PathMatcher pathMatcher = new AntPathMatcher();
     @Override
     @Transactional
     public Boolean register(FormRegister formRegister) {
@@ -120,6 +121,9 @@ public class AuthServiceImpl implements AuthService {
             throw new InvalidBearerTokenException("Invalid Token");
         }
         UserLoginInfo userLoginInfo = getUserSession(jwtTokenProvider.getIdFromJWT(introspectRequest.getToken()));
+        if(userLoginInfo.getRoles().stream().map(Role::getName).anyMatch("ROLE_ADMIN"::equals)){
+            return true;
+        }
         if(userLoginInfo.getResources().stream().noneMatch(
                 item -> item.getPath().contains(introspectRequest.getPath()))){
             throw new ForbiddenException();

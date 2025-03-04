@@ -16,8 +16,11 @@ import java.io.IOException;
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        log.error("Unauthorized Error : Error [{}]", authException.getMessage());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        log.error("❌ Unauthorized Access - Method: [{}], URI: [{}], IP: [{}], Error: [{}]",
+                request.getMethod(),
+                request.getRequestURI(),
+                request.getRemoteAddr(),
+                authException.getMessage());        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(new ObjectMapper().writeValueAsString(ApiResponse.FAIL(ErrorCode.UNAUTHENTICATED)));
         response.flushBuffer();
     }

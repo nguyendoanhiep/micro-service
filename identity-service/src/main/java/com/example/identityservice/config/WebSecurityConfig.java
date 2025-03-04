@@ -27,9 +27,10 @@ public class WebSecurityConfig {
     @Autowired
     JwtTokenProvider jwtTokenProvider;
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/identity/auth/register",
-            "/identity/auth/login",
-            "/identity/auth/introspect",
+            "/auth/register",
+            "/auth/login",
+            "/auth/introspect",
+            "/product/getAll",
     };
 
     @Bean
@@ -47,7 +48,7 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
+        httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
@@ -57,8 +58,8 @@ public class WebSecurityConfig {
                                 .decoder(jwtDecoder())
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 )
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
-                .build();
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
+        return httpSecurity.build();
     }
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter() {
