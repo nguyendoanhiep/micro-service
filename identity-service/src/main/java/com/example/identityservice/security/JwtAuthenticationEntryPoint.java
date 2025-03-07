@@ -20,7 +20,8 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                 request.getMethod(),
                 request.getRequestURI(),
                 request.getRemoteAddr(),
-                authException.getMessage());        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                authException.getMessage());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(new ObjectMapper().writeValueAsString(ApiResponse.FAIL(ErrorCode.UNAUTHENTICATED)));
         response.flushBuffer();
     }
