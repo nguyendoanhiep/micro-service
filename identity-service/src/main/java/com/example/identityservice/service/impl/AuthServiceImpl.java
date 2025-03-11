@@ -3,6 +3,7 @@ package com.example.identityservice.service.impl;
 import com.example.identityservice.dto.request.FormLogin;
 import com.example.identityservice.dto.request.FormRegister;
 import com.example.identityservice.dto.request.IntrospectRequest;
+import com.example.identityservice.entity.Customer;
 import com.example.identityservice.entity.Role;
 import com.example.identityservice.entity.User;
 import com.example.identityservice.dto.UserLoginInfo;
@@ -10,6 +11,7 @@ import com.example.identityservice.exception.BusinessException;
 import com.example.identityservice.exception.DataAlreadyExistsException;
 import com.example.identityservice.dto.ErrorCode;
 import com.example.identityservice.exception.ForbiddenException;
+import com.example.identityservice.repository.CustomerRepository;
 import com.example.identityservice.repository.ResourceRepository;
 import com.example.identityservice.repository.RoleRepository;
 import com.example.identityservice.repository.UserRepository;
@@ -49,6 +51,9 @@ public class AuthServiceImpl implements AuthService {
     ResourceRepository resourceRepository;
 
     @Autowired
+    CustomerRepository customerRepository;
+
+    @Autowired
     private StringRedisTemplate stringRedisTemplate;
     private static final String[] PUBLIC_ENDPOINTS = {
             "/identity/auth/register",
@@ -78,6 +83,13 @@ public class AuthServiceImpl implements AuthService {
                     .createDate(new Date())
                     .modifiedDate(new Date())
                     .build());
+            customerRepository.save(Customer.builder()
+                    .numberPhone(formRegister.getNumberPhone())
+                    .status(1)
+                    .createDate(new Date())
+                    .modifiedDate(new Date())
+                    .build()
+            );
             return true;
         } catch (Exception e) {
             log.info(e.getMessage());

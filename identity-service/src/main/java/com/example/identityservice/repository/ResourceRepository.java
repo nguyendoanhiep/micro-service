@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Set;
 
 public interface ResourceRepository extends JpaRepository<Resource, Long> {
@@ -15,6 +16,8 @@ public interface ResourceRepository extends JpaRepository<Resource, Long> {
             "where r.id in (:roleIds)",nativeQuery = true)
     Set<Resource> getResourcesByRoleIds(Set<Long> roleIds);
 
-    @Query("select r from Resource r where (:name is null or r.path = :path) and (:status is null or r.status = :status) ")
-    Page<Resource> getAll(Pageable pageable , String path, Integer status);
+    @Query("select r from Resource r where r.parentId is null")
+    List<Resource> getResourceParent();
+
+    List<Resource> getResourcesByParentId(Long parentId);
 }

@@ -17,22 +17,13 @@ public class ResourceController {
     ResourceService resourceService;
 
     @GetMapping("/getAll")
-    public ApiResponse<?> getAll(@RequestParam(defaultValue = "1") int page,
-                                 @RequestParam(defaultValue = "10") int size,
-                                 @RequestParam(required = false) String path,
-                                 @RequestParam Integer status
-    ) {
-        return ApiResponse.SUCCESS(resourceService.getAll(PageRequest.of(page - 1, size), path, status));
+    public ApiResponse<?> getAll() {
+        return ApiResponse.SUCCESS(resourceService.getAll());
     }
 
-    @PostMapping("/save")
-    public ApiResponse<?> save(@RequestBody Resource resource) {
-        return ApiResponse.SUCCESS(resourceService.save(resource));
-    }
-
-    @PostMapping("/edit")
-    public ApiResponse<?> edit(@RequestBody Resource resource) {
-        return ApiResponse.SUCCESS(resourceService.edit(resource));
+    @PostMapping("/addOrUpdate")
+    public ApiResponse<?> addOrUpdate(@RequestBody Resource resource) {
+        return ApiResponse.SUCCESS(resourceService.addOrUpdate(resource));
     }
 
     @PostMapping("/delete")

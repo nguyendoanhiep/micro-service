@@ -21,14 +21,10 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Role save(Role role) {
+    public Role addOrUpdate(Role role) {
         return roleRepository.save(role);
     }
 
-    @Override
-    public Role edit(Role role) {
-        return roleRepository.save(role);
-    }
 
     @Override
     public Boolean delete(Long id) {

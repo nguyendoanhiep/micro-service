@@ -7,9 +7,7 @@ import org.springframework.data.domain.Pageable;
 public interface RoleService {
     Page<Role> getAll(Pageable pageable,String name , Integer status);
 
-    Role save(Role role);
-
-    Role edit(Role role);
+    Role addOrUpdate(Role role);
 
     Boolean delete(Long id);
 }

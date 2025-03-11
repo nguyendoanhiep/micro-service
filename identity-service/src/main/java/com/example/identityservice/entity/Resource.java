@@ -12,11 +12,11 @@ public class Resource {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "parentId")
+    @Column(name = "parent_id")
     private Long parentId;
 
-    @Column(name = "status")
-    private Integer status;
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "path")
     private String path;

@@ -17,20 +17,16 @@ public class RoleController {
     public ApiResponse<?> getAll(@RequestParam(defaultValue = "1") int page,
                                  @RequestParam(defaultValue = "10") int size,
                                  @RequestParam(required = false) String name,
-                                 @RequestParam Integer status
+                                 @RequestParam(required = false) Integer status
     ) {
         return ApiResponse.SUCCESS(roleService.getAll(PageRequest.of(page - 1, size), name, status));
     }
 
-    @PostMapping("/save")
-    public ApiResponse<?> save(@RequestBody Role role) {
-        return ApiResponse.SUCCESS(roleService.save(role));
+    @PostMapping("/addOrUpdate")
+    public ApiResponse<?> addOrUpdate(@RequestBody Role role) {
+        return ApiResponse.SUCCESS(roleService.addOrUpdate(role));
     }
 
-    @PostMapping("/edit")
-    public ApiResponse<?> edit(@RequestBody Role role) {
-        return ApiResponse.SUCCESS(roleService.edit(role));
-    }
 
     @PostMapping("/delete")
     public ApiResponse<?> delete(@RequestParam Long id) {

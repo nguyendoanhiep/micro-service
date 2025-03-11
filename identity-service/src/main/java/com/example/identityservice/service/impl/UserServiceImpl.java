@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -36,7 +37,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<UserResponse> getAll(Pageable pageable, String search, Integer status) {
-        return userRepository.getAll(pageable , search , status);
+        Page<User> users = userRepository.getAll(pageable , search , status);
+        return users.map(user -> new UserResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getNumberPhone(),
+                user.getStatus(),
+                user.getCreateDate(),
+                user.getModifiedDate(),
+                user.getRoles()
+        ));
     }
 
     @Override
