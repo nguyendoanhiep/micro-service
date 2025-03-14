@@ -1,6 +1,7 @@
 package com.example.identityservice.controller;
 
 import com.example.identityservice.dto.ApiResponse;
+import com.example.identityservice.dto.request.BindingRequest;
 import com.example.identityservice.entity.Role;
 import com.example.identityservice.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,11 @@ public class RoleController {
     @PostMapping("/delete")
     public ApiResponse<?> delete(@RequestParam Long id) {
         return ApiResponse.SUCCESS(roleService.delete(id));
+    }
+
+    @PostMapping("/binding")
+    public ApiResponse<?> binding(@RequestBody BindingRequest request) {
+        return ApiResponse.SUCCESS(roleService.binding(request));
     }
 
 }

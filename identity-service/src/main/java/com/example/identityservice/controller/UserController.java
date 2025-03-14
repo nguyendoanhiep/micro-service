@@ -1,6 +1,7 @@
 package com.example.identityservice.controller;
 
 import com.example.identityservice.dto.ApiResponse;
+import com.example.identityservice.dto.request.UserRequest;
 import com.example.identityservice.entity.User;
 import com.example.identityservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +23,11 @@ public class UserController {
     ) {
         return ApiResponse.SUCCESS(userService.getAll(PageRequest.of(page - 1, size), search, status));
     }
-    @PostMapping("/save")
-    public ApiResponse<?> save(@RequestBody User user) {
-        return ApiResponse.SUCCESS(userService.save(user));
+    @PostMapping("/addOrUpdate")
+    public ApiResponse<?> addOrUpdate(@RequestBody UserRequest userRequest) {
+        return ApiResponse.SUCCESS(userService.addOrUpdate(userRequest));
     }
 
-    @PostMapping("/edit")
-    public ApiResponse<?> edit(@RequestBody User user) {
-        return ApiResponse.SUCCESS(userService.edit(user));
-    }
 
     @PostMapping("/delete")
     public ApiResponse<?> delete(@RequestParam Long id) {

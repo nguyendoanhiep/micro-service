@@ -3,10 +3,13 @@ package com.example.identityservice.exception;
 import com.example.identityservice.dto.ApiResponse;
 import com.example.identityservice.dto.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @ControllerAdvice
 @Slf4j
@@ -31,6 +34,9 @@ public class GlobalExceptionHandler {
         }
         if(ex instanceof InvalidBearerTokenException){
             return ResponseEntity.ok(ApiResponse.FAIL(ErrorCode.INVALID_TOKEN));
+        }
+        if(ex instanceof DataIntegrityViolationException){
+            return ResponseEntity.ok(ApiResponse.FAIL(ErrorCode.DATA_ALREADY_EXISTS));
         }
         return ResponseEntity.ok(ApiResponse.FAIL(500, ex.getMessage()));
     }

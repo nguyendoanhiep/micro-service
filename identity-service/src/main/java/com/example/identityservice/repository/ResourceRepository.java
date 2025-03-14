@@ -20,4 +20,7 @@ public interface ResourceRepository extends JpaRepository<Resource, Long> {
     List<Resource> getResourceParent();
 
     List<Resource> getResourcesByParentId(Long parentId);
+
+    @Query("select r from Resource r where r.id in (:ids)")
+    Set<Resource> getResourcesByIds(Set<Long> ids);
 }
