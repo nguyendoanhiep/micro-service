@@ -1,0 +1,99 @@
+version: '3.8'
+name: 'micro-service'
+networks:
+  mynetwork:
+    driver: bridge
+services:
+  redis:
+    image: redis:7
+    container_name: redis
+    restart: always
+    ports:
+      - "6380:6379"
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+    ports:
+      - "3309:3306"
+    expose:
+      - "3306"
+    volumes:
+      - ./sql/:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
+  front-end:
+    image: hieppnguyenndev/micro-service-front-end
+#    build:
+#      context: ./front-end
+#      dockerfile: Dockerfile
+    container_name: front-end
+    ports:
+      - "4000:80"
+  gateway:
+    image: hieppnguyenndev/micro-service-gateway
+#    build:
+#      context: ./gateway
+#      dockerfile: Dockerfile
+    container_name: gateway
+    ports:
+      - "8888:8888"
+    environment:
+      SPRING_CONFIG_LOCATION: "file:/config/application.yaml"
+    volumes:
+      - ./gateway/config:/config
+  identity-service:
+    image: hieppnguyenndev/micro-service-identity-service
+#    build:
+#      context: ./identity-service
+#      dockerfile: Dockerfile
+    container_name: identity-service
+    ports:
+      - "8001:8001"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/identity_service
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+  product-service:
+    image: hieppnguyenndev/micro-service-product-service
+#    build:
+#      context: ./product-service
+#      dockerfile: Dockerfile
+    container_name: product-service
+    ports:
+      - "8002:8002"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/product_service
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+    depends_on:
+      mysql:
+        condition: service_healthy
+  orders-service:
+    image: hieppnguyenndev/micro-service-orders-service
+#    build:
+#      context: ./orders-service
+#      dockerfile: Dockerfile
+    container_name: orders-service
+    ports:
+      - "8003:8003"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/orders_service
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+    depends_on:
+      mysql:
+        condition: service_healthy

@@ -1,11 +1,9 @@
-import axios from 'axios';
-import  {finalUrl} from '../../../env/Config'
+import axios from "../../../env/Config";
 import {getALl} from "../redux";
 
-const domain = finalUrl
 export const addOrUpdateResource = (role) => async (dispatch) => {
     try {
-        const response = await axios.post(domain + '/identity/resource/addOrUpdate', role);
+        const response = await axios.post('/identity/resource/addOrUpdate', role);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -14,7 +12,7 @@ export const addOrUpdateResource = (role) => async (dispatch) => {
 
 export const getAllResource = () => async (dispatch) => {
     try {
-        const response = await axios.get(domain + '/identity/resource/getAll');
+        const response = await axios.get( '/identity/resource/getAll');
         dispatch(getALl(response.data));
     } catch (error) {
         console.log(error);
@@ -24,7 +22,7 @@ export const getAllResource = () => async (dispatch) => {
 
 export const deleteResource = (id) => async (dispatch) => {
     try {
-        const response = await axios.post(domain + '/identity/resource/delete?id='+ id);
+        const response = await axios.post( '/identity/resource/delete?id='+ id);
         return response.data;
     } catch (error) {
         console.log(error);

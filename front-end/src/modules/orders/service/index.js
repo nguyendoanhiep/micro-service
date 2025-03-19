@@ -1,11 +1,9 @@
-import {baseUrl, finalUrl} from "../../../env/Config";
-import axios from "axios";
+import axios from "../../../env/Config";
 import { getAll} from "../redux";
 
-const domain = finalUrl
 export const getAllOrders = (params) => async (dispatch) => {
     try {
-        const response = await axios.get(domain + `/orders/getAll`,{
+        const response = await axios.get( `/orders/getAll`,{
             params:params
         });
         dispatch(getAll(response.data));
@@ -16,7 +14,7 @@ export const getAllOrders = (params) => async (dispatch) => {
 
 export const addOrUpdateOrders = (orders) => async (dispatch) => {
     try {
-        const response = await axios.post(domain + `/orders/addOrUpdate`,orders);
+        const response = await axios.post(`/orders/addOrUpdate`,orders);
         return response.data
     } catch (error) {
         console.log(error);
@@ -25,7 +23,7 @@ export const addOrUpdateOrders = (orders) => async (dispatch) => {
 
 export const activationOfTurnOff = (id) => async () => {
     try {
-        const res = await axios.post(domain + `/orders/changeStatus`, null,{
+        const res = await axios.post(`/orders/changeStatus`, null,{
             params: {
                 id : id
             }

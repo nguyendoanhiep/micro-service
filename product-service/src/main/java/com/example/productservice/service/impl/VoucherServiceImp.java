@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -76,6 +77,26 @@ public class VoucherServiceImp implements VoucherService {
     @Override
     public List<Voucher> getByCustomerId(Long customerId) {
         return voucherRepository.getByCustomerId(customerId);
+    }
+
+    @Override
+    public Voucher findById(Long id) {
+        return voucherRepository.findById(id).get();
+    }
+
+    @Override
+    public Long useVoucher(Long id) {
+        Optional<Voucher> voucher = voucherRepository.findById(id);
+        voucher.ifPresent(entity -> {
+            if (entity.getQuantity() > 0) {
+                entity.setQuantity(entity.getQuantity() - 1);
+                if (entity.getQuantity() == 0) {
+                    entity.setStatus(2);
+                }
+                voucherRepository.save(entity);
+            }
+        });
+        return voucher.get().getId();
     }
 
     private String generateRandomCode() {

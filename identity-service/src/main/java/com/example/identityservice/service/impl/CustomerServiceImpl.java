@@ -1,6 +1,7 @@
 package com.example.identityservice.service.impl;
 
 import com.example.identityservice.dto.request.CustomerRequest;
+import com.example.identityservice.dto.request.OrdersRequest;
 import com.example.identityservice.entity.Customer;
 import com.example.identityservice.repository.CustomerRepository;
 import com.example.identityservice.repository.UserRepository;
@@ -50,6 +51,27 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setCreateDate(request.getId() == null ? new Date() : customer.getCreateDate());
         customer.setModifiedDate(new Date());
         return customerRepository.save(customer);
+    }
+
+    @Override
+    public Long createOrUpdatePoint(OrdersRequest request) {
+        Customer res;
+        Customer customer = customerRepository.findByNumberPhone(request.getNumberPhone());
+        if (customer == null) {
+            res = customerRepository.save(Customer
+                    .builder()
+                    .id(null)
+                    .numberPhone(request.getNumberPhone())
+                    .status(1)
+                    .loyaltyPoints(0L)
+                    .createDate(new Date())
+                    .modifiedDate(new Date())
+                    .build());
+        } else {
+            customer.setLoyaltyPoints(customer.getLoyaltyPoints() + (request.getTotalValue()) / 100);
+            res = customerRepository.save(customer);
+        }
+        return res.getId();
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.example.identityservice.controller;
 
 import com.example.identityservice.dto.ApiResponse;
 import com.example.identityservice.dto.request.CustomerRequest;
+import com.example.identityservice.dto.request.OrdersRequest;
 import com.example.identityservice.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +32,11 @@ public class CustomerController {
     @PostMapping("/addOrUpdate")
     public ApiResponse<?> addOrUpdate(@RequestBody CustomerRequest request) {
         return ApiResponse.SUCCESS(customerService.addOrUpdate(request));
+    }
+
+    @PostMapping("/createOrUpdatePoint")
+    public Long createOrUpdatePoint(@RequestBody OrdersRequest request) {
+        return customerService.createOrUpdatePoint(request);
     }
 
     @PostMapping("/delete")

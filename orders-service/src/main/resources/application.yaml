@@ -26,3 +26,20 @@ spring:
       port: 6379
       password:
       timeout: 60000
+#  kafka:
+#    bootstrap-servers: localhost:9092
+#    producer:
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+#      acks: "-1"
+#      retries: 1
+#      properties:
+#        enable.idempotence: true
+#        max.in.flight.per.connection: 5
+#    consumer:
+#      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+#      auto-offset-reset: earliest
+
+app:
+  services:
+    identity: http://localhost:8001/identity
+    product: http://localhost:8002/product

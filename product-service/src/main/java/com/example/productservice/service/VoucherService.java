@@ -16,4 +16,6 @@ public interface VoucherService {
     Boolean delete(Long id);
 
     List<Voucher> getByCustomerId(Long customerId);
+    Voucher findById(Long id);
+    Long useVoucher(Long id);
 }

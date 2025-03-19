@@ -1,11 +1,9 @@
-import axios from 'axios';
-import  {finalUrl} from '../../../env/Config'
+import axios from "../../../env/Config";
 import {getALl} from "../redux";
 
-const domain = finalUrl
 export const addOrUpdateRole = (role) => async (dispatch) => {
     try {
-        const response = await axios.post(domain + '/identity/role/addOrUpdate', role);
+        const response = await axios.post('/identity/role/addOrUpdate', role);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -14,7 +12,7 @@ export const addOrUpdateRole = (role) => async (dispatch) => {
 
 export const getAllRole = (params) => async (dispatch) => {
     try {
-        const response = await axios.get(domain + '/identity/role/getAll', {
+        const response = await axios.get( '/identity/role/getAll', {
             params: params
         });
         dispatch(getALl(response.data));
@@ -26,7 +24,7 @@ export const getAllRole = (params) => async (dispatch) => {
 
 export const deleteRole = (id) => async (dispatch) => {
     try {
-        const response = await axios.post(domain + '/identity/role/delete?id='+ id);
+        const response = await axios.post( '/identity/role/delete?id='+ id);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -35,7 +33,7 @@ export const deleteRole = (id) => async (dispatch) => {
 
 export const binding = (bindingRequest) => async (dispatch) => {
     try {
-        const response = await axios.post(domain + '/identity/role/binding', bindingRequest);
+        const response = await axios.post('/identity/role/binding', bindingRequest);
         return response.data;
     } catch (error) {
         console.log(error);

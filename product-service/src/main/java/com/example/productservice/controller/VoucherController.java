@@ -4,6 +4,7 @@ package com.example.productservice.controller;
 import com.example.productservice.dto.ApiResponse;
 import com.example.productservice.dto.request.AssignCusRequest;
 import com.example.productservice.dto.request.VoucherRequest;
+import com.example.productservice.entity.Voucher;
 import com.example.productservice.service.VoucherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -38,6 +39,16 @@ public class VoucherController {
     @GetMapping("/getCustomerIdsById")
     public ApiResponse<?> getCustomerIdsById(@RequestParam Long voucherId) {
         return ApiResponse.SUCCESS(voucherService.getCustomerIdsById(voucherId));
+    }
+
+    @GetMapping("/findById")
+    public Voucher findById(@RequestParam Long id) {
+        return voucherService.findById(id);
+    }
+
+    @PostMapping("/useVoucher")
+    public Long useVoucher(@RequestParam Long id) {
+        return voucherService.useVoucher(id);
     }
 
     @PostMapping("/delete")
