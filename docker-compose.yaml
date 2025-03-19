@@ -30,17 +30,17 @@ services:
       timeout: 5s
   front-end:
     image: hieppnguyenndev/micro-service-front-end
-#    build:
-#      context: ./front-end
-#      dockerfile: Dockerfile
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
     container_name: front-end
     ports:
       - "4000:80"
   gateway:
     image: hieppnguyenndev/micro-service-gateway
-#    build:
-#      context: ./gateway
-#      dockerfile: Dockerfile
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
     container_name: gateway
     ports:
       - "8888:8888"
@@ -50,9 +50,9 @@ services:
       - ./gateway/config:/config
   identity-service:
     image: hieppnguyenndev/micro-service-identity-service
-#    build:
-#      context: ./identity-service
-#      dockerfile: Dockerfile
+    build:
+      context: ./identity-service
+      dockerfile: Dockerfile
     container_name: identity-service
     ports:
       - "8001:8001"
@@ -69,9 +69,9 @@ services:
         condition: service_started
   product-service:
     image: hieppnguyenndev/micro-service-product-service
-#    build:
-#      context: ./product-service
-#      dockerfile: Dockerfile
+    build:
+      context: ./product-service
+      dockerfile: Dockerfile
     container_name: product-service
     ports:
       - "8002:8002"
@@ -84,9 +84,9 @@ services:
         condition: service_healthy
   orders-service:
     image: hieppnguyenndev/micro-service-orders-service
-#    build:
-#      context: ./orders-service
-#      dockerfile: Dockerfile
+    build:
+      context: ./orders-service
+      dockerfile: Dockerfile
     container_name: orders-service
     ports:
       - "8003:8003"
