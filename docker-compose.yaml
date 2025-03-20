@@ -10,6 +10,11 @@ services:
     restart: always
     ports:
       - "6380:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
   mysql:
     image: mysql:8.0
     container_name: mysql
@@ -66,7 +71,7 @@ services:
       mysql:
         condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
   product-service:
     image: hieppnguyenndev/micro-service-product-service
     build:
