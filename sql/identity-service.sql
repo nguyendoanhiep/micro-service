@@ -28,20 +28,20 @@ DROP TABLE IF EXISTS `customer`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `customer` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `address` varchar(255) DEFAULT NULL,
-  `create_date` datetime(6) DEFAULT NULL,
-  `date_of_birth` datetime(6) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `gender` varchar(255) DEFAULT NULL,
-  `loyalty_points` bigint DEFAULT NULL,
-  `modified_date` datetime(6) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `number_phone` varchar(255) DEFAULT NULL,
-  `status` int DEFAULT NULL,
-  `url_image` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UK7utgspy20yf3ww35kjiwptyaj` (`number_phone`)
+                            `id` bigint NOT NULL AUTO_INCREMENT,
+                            `address` varchar(255) DEFAULT NULL,
+                            `create_date` datetime(6) DEFAULT NULL,
+                            `date_of_birth` datetime(6) DEFAULT NULL,
+                            `email` varchar(255) DEFAULT NULL,
+                            `gender` varchar(255) DEFAULT NULL,
+                            `loyalty_points` bigint DEFAULT NULL,
+                            `modified_date` datetime(6) DEFAULT NULL,
+                            `name` varchar(255) DEFAULT NULL,
+                            `number_phone` varchar(255) DEFAULT NULL,
+                            `status` int DEFAULT NULL,
+                            `url_image` varchar(255) DEFAULT NULL,
+                            PRIMARY KEY (`id`),
+                            UNIQUE KEY `UK7utgspy20yf3ww35kjiwptyaj` (`number_phone`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -63,13 +63,13 @@ DROP TABLE IF EXISTS `resource`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `resource` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `method` varchar(255) DEFAULT NULL,
-  `path` varchar(255) DEFAULT NULL,
-  `parent_id` bigint DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+                            `id` bigint NOT NULL AUTO_INCREMENT,
+                            `method` varchar(255) DEFAULT NULL,
+                            `path` varchar(255) DEFAULT NULL,
+                            `parent_id` bigint DEFAULT NULL,
+                            `name` varchar(255) DEFAULT NULL,
+                            PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -78,7 +78,7 @@ CREATE TABLE `resource` (
 
 LOCK TABLES `resource` WRITE;
 /*!40000 ALTER TABLE `resource` DISABLE KEYS */;
-INSERT INTO `resource` VALUES (1,'GET','/identity/user/getAll',3,'get all user'),(2,'GET','/identity/role/getAll	',4,'get all role'),(3,NULL,'/user',NULL,'Quản lý user'),(4,NULL,'/role',NULL,'Quản lý role'),(5,'GET','/product',NULL,'Quản lý sản phẩm'),(6,'GET','/product/getAll',5,'get all product'),(7,'POST','/identity/user/addOrUpdate',3,'add or update user');
+INSERT INTO `resource` VALUES (1,'GET','/identity/user/getAll',3,'get all user'),(2,'GET','/identity/role/getAll	',4,'get all role'),(3,NULL,'/user',NULL,'Quản lý user'),(4,NULL,'/role',NULL,'Quản lý role'),(5,'GET','/product',NULL,'Quản lý sản phẩm'),(6,'GET','/product/getAll',5,'get all product'),(7,'POST','/identity/user/addOrUpdate',3,'add or update user'),(8,NULL,'/voucher',NULL,'Quản lý voucher'),(9,'GET','/product/voucher/getAll',8,'get all voucher');
 /*!40000 ALTER TABLE `resource` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,10 +90,10 @@ DROP TABLE IF EXISTS `role`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `role` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(60) DEFAULT NULL,
-  `status` int DEFAULT NULL,
-  PRIMARY KEY (`id`)
+                        `id` bigint NOT NULL AUTO_INCREMENT,
+                        `name` varchar(60) DEFAULT NULL,
+                        `status` int DEFAULT NULL,
+                        PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -103,7 +103,7 @@ CREATE TABLE `role` (
 
 LOCK TABLES `role` WRITE;
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
-INSERT INTO `role` VALUES (1,'ROLE_USER',1),(2,'ROLE_ADMIN',1),(4,'test222',2);
+INSERT INTO `role` VALUES (1,'ROLE_USER',1),(2,'ROLE_ADMIN',1),(4,'ROLE_USER_2',1);
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -115,12 +115,12 @@ DROP TABLE IF EXISTS `role_resource`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `role_resource` (
-  `role_id` bigint NOT NULL,
-  `resource_id` bigint NOT NULL,
-  PRIMARY KEY (`role_id`,`resource_id`),
-  KEY `FKr2orp5em3dob6f299ra9oyexr` (`resource_id`),
-  CONSTRAINT `FKh8lunkrwoyio367ec8y12bis1` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`),
-  CONSTRAINT `FKr2orp5em3dob6f299ra9oyexr` FOREIGN KEY (`resource_id`) REFERENCES `resource` (`id`)
+                                 `role_id` bigint NOT NULL,
+                                 `resource_id` bigint NOT NULL,
+                                 PRIMARY KEY (`role_id`,`resource_id`),
+                                 KEY `FKr2orp5em3dob6f299ra9oyexr` (`resource_id`),
+                                 CONSTRAINT `FKh8lunkrwoyio367ec8y12bis1` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`),
+                                 CONSTRAINT `FKr2orp5em3dob6f299ra9oyexr` FOREIGN KEY (`resource_id`) REFERENCES `resource` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -130,7 +130,7 @@ CREATE TABLE `role_resource` (
 
 LOCK TABLES `role_resource` WRITE;
 /*!40000 ALTER TABLE `role_resource` DISABLE KEYS */;
-INSERT INTO `role_resource` VALUES (1,1),(2,1),(1,2),(2,2),(1,3),(2,3),(1,4),(2,4),(2,5),(4,5),(2,6),(4,6),(2,7);
+INSERT INTO `role_resource` VALUES (1,1),(2,1),(4,1),(1,2),(2,2),(4,2),(1,3),(2,3),(1,4),(2,4),(2,5),(2,6),(2,7),(1,8),(1,9);
 /*!40000 ALTER TABLE `role_resource` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -142,16 +142,16 @@ DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL,
-  `number_phone` varchar(255) DEFAULT NULL,
-  `status` int DEFAULT NULL,
-  `create_date` datetime(6) DEFAULT NULL,
-  `modified_date` datetime(6) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UKhsxls3ommvsuicy5wpe44ops` (`number_phone`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+                        `id` bigint NOT NULL AUTO_INCREMENT,
+                        `username` varchar(255) DEFAULT NULL,
+                        `password` varchar(255) DEFAULT NULL,
+                        `number_phone` varchar(255) DEFAULT NULL,
+                        `status` int DEFAULT NULL,
+                        `create_date` datetime(6) DEFAULT NULL,
+                        `modified_date` datetime(6) DEFAULT NULL,
+                        PRIMARY KEY (`id`),
+                        UNIQUE KEY `UKhsxls3ommvsuicy5wpe44ops` (`number_phone`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -160,7 +160,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'hiepadmin','$2a$10$4xpJ3.A6cehaOZRUDlrcJ.XH8Lr.fRlG92mn2TOe55H5uDLBmPZyu','0987654321',1,'2025-02-11 11:13:39.103000','2025-03-12 14:39:16.339000'),(17,'hiepuser','$2a$10$XaR9DprVmNI5UWZv89PuK.kfqHWdeHnO504.HryKNs3kl6m2XMRE2','0987654322',1,'2025-03-12 09:58:59.051000','2025-03-12 09:58:59.051000');
+INSERT INTO `user` VALUES (1,'hiepadmin','$2a$10$4xpJ3.A6cehaOZRUDlrcJ.XH8Lr.fRlG92mn2TOe55H5uDLBmPZyu','0987654321',1,'2025-02-11 11:13:39.103000','2025-03-12 14:39:16.339000'),(17,'hiepuser','$2a$10$4xpJ3.A6cehaOZRUDlrcJ.XH8Lr.fRlG92mn2TOe55H5uDLBmPZyu','0987654322',1,'2025-03-12 09:58:59.051000','2025-03-12 09:58:59.051000'),(18,'hiepuser2','$2a$10$6FdIT7U1EsbkhIVAVYUh.OUHWX/1tnq0xIrQSNetfInZu5MCQj6B6','0345591435',1,'2025-03-19 14:37:50.766000','2025-03-19 14:37:50.766000');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -172,12 +172,12 @@ DROP TABLE IF EXISTS `user_role`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_role` (
-  `user_id` bigint NOT NULL,
-  `role_id` bigint NOT NULL,
-  PRIMARY KEY (`user_id`,`role_id`),
-  KEY `FKa68196081fvovjhkek5m97n3y` (`role_id`),
-  CONSTRAINT `FK859n2jvi8ivhui0rl0esws6o` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-  CONSTRAINT `FKa68196081fvovjhkek5m97n3y` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`)
+                             `user_id` bigint NOT NULL,
+                             `role_id` bigint NOT NULL,
+                             PRIMARY KEY (`user_id`,`role_id`),
+                             KEY `FKa68196081fvovjhkek5m97n3y` (`role_id`),
+                             CONSTRAINT `FK859n2jvi8ivhui0rl0esws6o` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+                             CONSTRAINT `FKa68196081fvovjhkek5m97n3y` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -187,7 +187,7 @@ CREATE TABLE `user_role` (
 
 LOCK TABLES `user_role` WRITE;
 /*!40000 ALTER TABLE `user_role` DISABLE KEYS */;
-INSERT INTO `user_role` VALUES (1,1),(17,1),(1,2);
+INSERT INTO `user_role` VALUES (1,1),(17,1),(1,2),(18,4);
 /*!40000 ALTER TABLE `user_role` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -200,4 +200,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-19  8:45:52
+-- Dump completed on 2025-03-27  9:48:26
