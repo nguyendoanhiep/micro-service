@@ -42,13 +42,13 @@ public class VoucherController {
     }
 
     @GetMapping("/findById")
-    public Voucher findById(@RequestParam Long id) {
-        return voucherService.findById(id);
+    public ApiResponse<?> findById(@RequestParam Long id) {
+        return ApiResponse.SUCCESS(voucherService.findById(id));
     }
 
     @PostMapping("/useVoucher")
-    public Long useVoucher(@RequestParam Long id) {
-        return voucherService.useVoucher(id);
+    public ApiResponse<?> useVoucher(@RequestParam Long id) {
+        return ApiResponse.SUCCESS(voucherService.useVoucher(id));
     }
 
     @PostMapping("/delete")

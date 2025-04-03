@@ -35,8 +35,8 @@ public class CustomerController {
     }
 
     @PostMapping("/createOrUpdatePoint")
-    public Long createOrUpdatePoint(@RequestBody OrdersRequest request) {
-        return customerService.createOrUpdatePoint(request);
+    public ApiResponse<?> createOrUpdatePoint(@RequestBody OrdersRequest request) {
+        return ApiResponse.SUCCESS(customerService.createOrUpdatePoint(request));
     }
 
     @PostMapping("/delete")

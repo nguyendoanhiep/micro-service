@@ -1,8 +1,11 @@
 package com.example.ordersservice.service.impl;
 
 
+import com.example.ordersservice.dto.ApiResponse;
 import com.example.ordersservice.dto.request.OrdersRequest;
+import com.example.ordersservice.dto.response.Customer;
 import com.example.ordersservice.dto.response.OrdersResponse;
+import com.example.ordersservice.dto.response.Voucher;
 import com.example.ordersservice.entity.Orders;
 import com.example.ordersservice.http.IdentityClient;
 import com.example.ordersservice.http.VoucherClient;
@@ -47,20 +50,26 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Page<OrdersResponse> getAll(Pageable pageable, String search, Integer status) {
         return orderRepository.getAll(pageable, search, status).map(order -> {
-            Map<?, ?> customer = null;
+            Customer customer = null;
             if (order.getCustomerId() != null) {
-                customer = (Map<?, ?>) identityClient.findById(order.getCustomerId()).getData();
+                ApiResponse<Customer> response = identityClient.findById(order.getCustomerId());
+                if(response.getCode() == 200) {
+                    customer = response.getData();
+                }
             }
-            Map<?, String> voucher = null;
+            Voucher voucher = null;
             if (order.getVoucherId() != null) {
-                voucher = voucherClient.findById(order.getVoucherId());
+                ApiResponse<Voucher> response = voucherClient.findById(order.getVoucherId());
+                if(response.getCode() == 200) {
+                    voucher = response.getData();
+                }
             }
             return new OrdersResponse(
                     order.getId(),
-                    order.getCustomerId() == null ? "" : customer.get("name").toString(),
+                    order.getCustomerId() == null ? "" : customer.getName(),
                     order.getCode(),
-                    order.getCustomerId() == null ? "" : customer.get("numberPhone").toString(),
-                    order.getVoucherId() == null ? "" : voucher.get("name"),
+                    order.getCustomerId() == null ? "" : customer.getNumberPhone(),
+                    order.getVoucherId() == null ? "" : voucher.getName(),
                     order.getOriginalTotalValue(),
                     order.getDiscountAmount(),
                     order.getTotalValue(),
@@ -76,26 +85,40 @@ public class OrderServiceImpl implements OrderService {
     public Boolean save(OrdersRequest request) {
         Long customerId = null;
         if (request.getNumberPhone() != null) {
-            customerId = identityClient.createOrUpdatePoint(request);
+            ApiResponse<Long> apiResponse = identityClient.createOrUpdatePoint(request);
+            if(apiResponse.getCode() == 200){
+                customerId = apiResponse.getData();
+            }else {
+                return false;
+            }
         }
         if (request.getVoucherId() != null) {
-            voucherClient.useVoucher(request.getVoucherId());
+            ApiResponse<Long> apiResponse = voucherClient.useVoucher(request.getVoucherId());
+            if(apiResponse.getCode() != 200){
+                // Kafka send message rollback step 1
+                return false;
+            }
         }
-        Orders orders = orderRepository.save(Orders
-                .builder()
-                .id(request.getId())
-                .code(generateRandomCode())
-                .customerId(customerId)
-                .voucherId(request.getVoucherId())
-                .originalTotalValue(request.getOriginalTotalValue())
-                .discountAmount(request.getDiscountAmount() == null ? 0 : request.getDiscountAmount())
-                .totalValue(request.getTotalValue())
-                .status(1)
-                .createDate(new Date())
-                .modifiedDate(new Date())
-                .build());
-        request.getOrdersProducts().forEach(product -> product.setOrdersId(orders.getId()));
-        ordersProductRepository.saveAll(request.getOrdersProducts());
+        try{
+            Orders orders = orderRepository.save(Orders
+                    .builder()
+                    .id(request.getId())
+                    .code(generateRandomCode())
+                    .customerId(customerId)
+                    .voucherId(request.getVoucherId())
+                    .originalTotalValue(request.getOriginalTotalValue())
+                    .discountAmount(request.getDiscountAmount() == null ? 0 : request.getDiscountAmount())
+                    .totalValue(request.getTotalValue())
+                    .status(1)
+                    .createDate(new Date())
+                    .modifiedDate(new Date())
+                    .build());
+            request.getOrdersProducts().forEach(product -> product.setOrdersId(orders.getId()));
+            ordersProductRepository.saveAll(request.getOrdersProducts());
+        }catch (Exception e){
+            log.info(e.getMessage());
+            // Kafka send message rollback step 1 and step 2
+        }
         return true;
 
     }
