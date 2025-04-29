@@ -149,7 +149,7 @@ const Product = () => {
         setIsAddOrUpdate(true)
         if (record) {
             setProductId(record.id)
-            dispatch(getImageByProductId(record.id))
+            // dispatch(getImageByProductId(record.id))
             productForm.setFieldsValue(record)
             setIsCreate(false)
         } else {
@@ -213,7 +213,7 @@ const Product = () => {
                 position: "top-center",
                 autoClose: 2000,
             });
-            dispatch(getImageByProductId(productId))
+            // dispatch(getImageByProductId(productId))
             setIsLoading(!isLoading)
         }else {
             toast.success('Xóa ảnh thất bại! đã có lỗi xảy ra', {
@@ -231,7 +231,7 @@ const Product = () => {
                 position: "top-center",
                 autoClose: 2000,
             });
-            dispatch(getImageByProductId(productId))
+            // dispatch(getImageByProductId(productId))
             setIsLoading(!isLoading)
         }else {
             toast.success('Chọn ảnh đại diện thất bại! đã có lỗi xảy ra', {

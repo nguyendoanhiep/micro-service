@@ -4,6 +4,7 @@ import com.example.ordersservice.entity.OrdersProduct;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -17,5 +18,6 @@ public class OrdersRequest {
     private Long discountAmount;
     private Long totalValue;
     private Integer status;
+    private Date createDate;
     private List<OrdersProduct> ordersProducts;
 }

@@ -21,6 +21,17 @@ export const addOrUpdateOrders = (orders) => async (dispatch) => {
     }
 };
 
+export const autoGenOrders = (params) => async (dispatch) => {
+    try {
+        const response = await axios.get(`/orders/autoGenOrders`,{
+            params:params
+        });
+        return response.data
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 export const activationOfTurnOff = (id) => async () => {
     try {
         const res = await axios.post(`/orders/changeStatus`, null,{

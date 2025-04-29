@@ -6,7 +6,6 @@ export const getAllProduct = (params) => async (dispatch) => {
             params: params
 
         });
-        console.log(response)
         dispatch(getAll(response.data));
     } catch (error) {
         console.log(error);

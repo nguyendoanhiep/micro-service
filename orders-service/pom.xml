@@ -71,6 +71,11 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.3</version> <!-- Sử dụng phiên bản mới nhất nếu có -->
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>

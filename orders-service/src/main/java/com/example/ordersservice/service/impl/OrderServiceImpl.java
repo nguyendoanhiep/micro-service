@@ -23,9 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 
 @Service
@@ -48,16 +46,16 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public Page<OrdersResponse> getAll(Pageable pageable, String search, Integer status) {
-        return orderRepository.getAll(pageable, search, status).map(order -> {
-            Customer customer = null;
+    public Page<OrdersResponse> getAll(Pageable pageable, String search, Integer status, Date fromDate, Date toDate) {
+        return orderRepository.getAll(pageable, search, status ,fromDate , toDate).map(order -> {
+            Customer customer = new Customer();
             if (order.getCustomerId() != null) {
                 ApiResponse<Customer> response = identityClient.findById(order.getCustomerId());
                 if(response.getCode() == 200) {
                     customer = response.getData();
                 }
             }
-            Voucher voucher = null;
+            Voucher voucher = new Voucher();
             if (order.getVoucherId() != null) {
                 ApiResponse<Voucher> response = voucherClient.findById(order.getVoucherId());
                 if(response.getCode() == 200) {
@@ -124,6 +122,48 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Boolean autoGenOrders(Long totalRecord, Date createDate) {
+        List<Orders> orders = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(createDate);
+        for (int i = 0; i < totalRecord; i++) {
+            Date newDate = calendar.getTime();
+            try{
+                Long value = getRandomValue();
+                orders.add(
+                        Orders.builder()
+                                .code(generateRandomCode())
+                                .customerId(getRandomNumber())
+                                .originalTotalValue(value)
+                                .discountAmount(0L)
+                                .totalValue(value)
+                                .status(1)
+                                .createDate(newDate)
+                                .modifiedDate(new Date())
+                                .build());
+                calendar.add(Calendar.MINUTE, 1);
+            }catch (Exception e){
+                log.info(e.getMessage());
+                // Kafka send message rollback step 1 and step 2
+            }
+        }
+        orderRepository.saveAll(orders);
+        return true;
+    }
+    Long getRandomNumber() {
+        Long[] numbers = {1L, 3L, 4L, 5L, 6L , null , null};
+        Random random = new Random();
+        int randomIndex = random.nextInt(numbers.length);
+        return numbers[randomIndex];
+    }
+    public long getRandomValue() {
+        long[] values = {100000, 20000, 40000, 45000, 52000, 83200, 63000, 270000, 140000, 190000};
+        Random random = new Random();
+        int randomIndex = random.nextInt(values.length);
+        return values[randomIndex];
+    }
+
+    @Override
     public Boolean changeStatus(Long id) {
         Orders orders = orderRepository.findById(id).get();
         if (orders.getStatus() == 1) {
@@ -146,7 +186,7 @@ public class OrderServiceImpl implements OrderService {
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 5; i++) {
             int index = random.nextInt(candidateChars.length());
             sb.append(candidateChars.charAt(index));
         }

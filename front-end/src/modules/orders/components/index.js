@@ -1,8 +1,11 @@
-import {Button, Input, Pagination, Select, Table} from "antd";
+import {Button, DatePicker, Input, Pagination, Select, Table} from "antd";
 import {useDispatch, useSelector} from "react-redux";
 import React, {useEffect, useState} from "react";
 import {toast} from "react-toastify";
-import {activationOfTurnOff, getAllOrders} from "../service";
+import {activationOfTurnOff, addOrUpdateOrders, autoGenOrders, getAllOrders} from "../service";
+import {getAllProduct} from "../../product/service";
+import axios, {baseUrl} from "../../../env/Config";
+import dayjs from "dayjs";
 
 const {Search} = Input;
 
@@ -96,14 +99,33 @@ const Orders = () => {
     ];
 
     const dispatch = useDispatch();
+
+    const ordersList = useSelector((state) => state.orders.orders);
+    const [createDate , setCreateDate] = useState()
+    const today = new Date();
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(today.getDate() - 7);
+
+    const [fromDate, setFromDate] = useState(oneWeekAgo);
+    const [toDate, setToDate] = useState(today);
+
     const [params, setParams] = useState({
         page: 1,
         size: 10,
         search: '',
         status: 0,
+        fromDate:fromDate,
+        toDate:toDate,
     });
-    const ordersList = useSelector((state) => state.orders.orders);
 
+    useEffect(() => {
+        setParams(prevParams => ({
+            ...prevParams,
+            fromDate: fromDate,
+            toDate: toDate,
+        }));
+        console.log(params)
+    }, [fromDate, toDate]);
     const handleActivationOfTurnOff = async (record) => {
         const res = await dispatch(activationOfTurnOff(record.id))
         if (res.code === 200) {
@@ -122,10 +144,15 @@ const Orders = () => {
         }
     };
     const onSearch = async (value) => {
-        const newParams = {...params, name: value}
+        const newParams = {...params, search: value}
         setParams(newParams)
         await dispatch(getAllOrders(newParams))
     };
+
+    const onHandleAutoScaleOrders = async (totalRecord) => {
+        await dispatch(autoGenOrders({totalRecord,createDate}));
+    }
+
 
     const handlePageChange = (e) => {
         const newParams = {...params, page: e}
@@ -133,8 +160,48 @@ const Orders = () => {
         dispatch(getAllOrders(newParams))
 
     }
+    const exportExcel = async () => {
+        try {
+            const response = await axios.get("/orders/exportExcel", {
+                responseType: "blob", // Quan trọng để nhận file nhị phân
+                onDownloadProgress: (progressEvent) => {
+                    console.log(progressEvent)
+                    if (progressEvent.lengthComputable) {
+                        const percent = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+                        console.log(`Đang tải: ${percent}%`); // Hiển thị tiến trình trong console
+                    }
+                }
+            });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+
+            // Tên file tùy chỉnh
+            const currentTime = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+            link.setAttribute("download", `orders-${currentTime}.xlsx`);
+
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (error) {
+            toast.error('Lỗi khi export Excel:', {
+                className: 'my-toast',
+                position: "top-center",
+                autoClose: 2000,
+            });
+            console.error("Lỗi khi export Excel:", error);
+        }
+    }
+
     useEffect(() => {
         dispatch(getAllOrders(params))
+        dispatch(getAllProduct({
+            page: 1,
+            size: 9999,
+            name: null,
+            status: null,
+        }))
     }, [])
     return (
         <div style={{position: 'relative'}}>
@@ -143,19 +210,51 @@ const Orders = () => {
                 justifyContent: ' space-between'
             }}>
                 <div>
+                    <DatePicker placeholder={"From Date"}
+                                defaultValue={dayjs(fromDate)}
+                                onChange={(value)=>{
+                                    setFromDate(value.toDate())
+                                    console.log(value.toDate())
+                                }} />
+                    <DatePicker placeholder={"To Date"}
+                                defaultValue={dayjs(toDate)}
+                                onChange={(value)=>{
+                                    setToDate(value.toDate())
+                                }} />
                     <Select
                         placeholder="Select a status"
                         options={STATUS_OPTIONS}
                         onChange={(e) => setParams({...params, status: e})}
                     />
                     <Search
-                        placeholder="Nhập số điện thoại "
+                        placeholder="Nhập mã đơn hàng "
                         allowClear
                         style={{
                             width: 250,
                             marginBottom: 20
                         }}
                         onSearch={value => onSearch(value)}
+                    />
+                </div>
+                <div>
+                    <Button style={{margin: 5, width: 120}} type="primary"
+                            onClick={()=>exportExcel()}>Export Excel</Button>
+                </div>
+            </div>
+            <div style={{
+                display: 'flex',
+                justifyContent: ' space-between'
+            }}>
+                <div>
+                    <DatePicker onChange={(date)=>{ setCreateDate(date.toDate());}} />
+                    <Search
+                        placeholder="Nhập số đơn hàng muốn tạo tự động "
+                        allowClear
+                        style={{
+                            width: 310,
+                            marginBottom: 20
+                        }}
+                        onSearch={value => onHandleAutoScaleOrders(value)}
                     />
                 </div>
             </div>
