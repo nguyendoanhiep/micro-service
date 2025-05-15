@@ -113,7 +113,7 @@ const Orders = () => {
         page: 1,
         size: 10,
         search: '',
-        status: 0,
+        status: null,
         fromDate:fromDate,
         toDate:toDate,
     });
